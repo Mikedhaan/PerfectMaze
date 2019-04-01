@@ -7,11 +7,11 @@ public class MazeGenerator : MonoBehaviour
 
     public int sizeX, sizeY;
     Cell[,] Cells;
-    Vector2 startCell = new Vector2(0, 0);
     List<Cell> activeCells;
     public float generateDelay;
     public Cell cell;
     public GameObject gridWall;
+    public int failedTries;
 
     private Vector2[] directions =
         {
@@ -20,6 +20,8 @@ public class MazeGenerator : MonoBehaviour
             new Vector2(0,-1),
             new Vector2(-1, 0)
         };
+
+    public List<Cell> allCells;
 
     public Vector2 nextDirection;
     public Vector2 currentCell;
@@ -30,16 +32,18 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //activeCells = new List<Cell>();
+        Cells = new Cell[sizeX, sizeY];
+        allCells = new List<Cell>();
         currentCell = new Vector2(5, 5);
-        Cells[(int)currentCell.x, (int)currentCell.y].isVisited = true;
-        //StartCoroutine(GenerateGrid());
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (failedTries > 20)
+        {
+            FinishMaze();
+        }
     }
 
     void RandomNextStep()
@@ -51,7 +55,7 @@ public class MazeGenerator : MonoBehaviour
 
     public IEnumerator GenerateGrid()
     {
-        Cells = new Cell[sizeX, sizeY];
+       
         for (int x = 0; x < sizeX; x++)
         {
             for (int y = 0; y < sizeY; y++)
@@ -69,7 +73,8 @@ public class MazeGenerator : MonoBehaviour
         Cells[posX, posY] = newCell;
         newCell.transform.localPosition = new Vector3(posX, posY, 0);
         newCell.name = "Floor " + posX + " " + posY;
-        
+        newCell.transform.parent = this.transform;
+        allCells.Add(newCell);
     }
 
     public IEnumerator MazeMaker()
@@ -77,31 +82,55 @@ public class MazeGenerator : MonoBehaviour
         while (true)
         {
             RandomNextStep();
-
-            Debug.Log((int)nextCell.x +" "+ (int)nextCell.y);
-
+            failedTries++;
             if (nextCell.x < sizeX && nextCell.x >= 0 && nextCell.y < sizeY && nextCell.y >= 0)
             {
 
                 if (!Cells[(int)nextCell.x, (int)nextCell.y].isVisited)
-                {
-                    
+                {                  
                     RemoveWalls();
                     Cells[(int)nextCell.x, (int)nextCell.y].isVisited = true;
+                    failedTries = 0;
                 }
+
             }
                 
             yield return new WaitForSeconds(generateDelay);
         }
     }
 
-    void CheckInBounds()
+    void checkBounds()
     {
-        if (nextCell.x <= sizeX || nextCell.x >= 0 || nextCell.y <= sizeY || nextCell.y >= 0)
+        if (nextCell.x < sizeX && nextCell.x >= 0 && nextCell.y < sizeY && nextCell.y >= 0)
         {
-        }
 
+        }
+        else
+            RandomNextStep();
     }
+
+    void FinishMaze()
+    {
+        failedTries = 0;
+        StopCoroutine(MazeMaker());
+        foreach(Cell cell in allCells)
+        {
+            if (!cell.isVisited)
+            {
+                currentCell = new Vector2((int)cell.transform.position.x, (int)cell.transform.position.y);
+                Cells[(int)currentCell.x, (int)currentCell.y].isVisited = true;
+                RandomNextStep();
+
+                    RemoveWalls();
+                
+                Debug.Log((int)currentCell.x + " " + (int)currentCell.y);
+                StartCoroutine(MazeMaker());
+                return;
+            }
+        }
+    }
+
+ 
 
     Cell getCell(Vector2 cellPos)
     {
