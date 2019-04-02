@@ -51,14 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dad3ccdd5edea1438e502825e40d2b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sizeX: 25
-  sizeY: 25
+  sizeX: 10
+  sizeY: 10
   generateDelay: 0
   cell: {fileID: 114078329491486366, guid: db6dca4caee8821428557f05e38771cd, type: 2}
-  gridWall: {fileID: 0}
-  failedTries: 0
-  allCells: []
-  nextDirection: {x: 0, y: 0}
-  currentCell: {x: 0, y: 0}
-  nextCell: {x: 0, y: 0}
-  randomDirection: 0

@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
     void BeginGame()
     {
         mazeGenerator = Instantiate(mazePrefab) as MazeGenerator;
-        StartCoroutine(mazeGenerator.GenerateGrid());
+        StartCoroutine(mazeGenerator.CreateGrid());
     }
     
     void RestartGame()
