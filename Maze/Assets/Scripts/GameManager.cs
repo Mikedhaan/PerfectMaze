@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
     public int sizeX, sizeY;
+    private float delay;
 
     public bool playing = false;
     public float playTime = 0;
@@ -56,12 +57,14 @@ public class GameManager : MonoBehaviour {
         if (currentMaze != null)
             Destroy(currentMaze);
 
-        if (sizeX != 0 && sizeY != 0)
+        if (sizeX != 0 && sizeY != 0 && delay > 0)
         {
+            //Instantiate the maze with settings
             mazeGenerator = Instantiate(mazePrefab) as MazeGenerator;
             mazeGenerator.name = "Maze";
             mazeGenerator.sizeX = sizeX;
             mazeGenerator.sizeY = sizeY;
+            mazeGenerator.generateDelay = delay;
 
             //Instantiate new maze with parent so we can remove old maze upon new creation
             GameObject cameraGo = Instantiate(cameraPrefab);
@@ -100,8 +103,17 @@ public class GameManager : MonoBehaviour {
 
     public void spawnPlayer()
     {
+        //Instantiate the player and set playing to true so the counter can start
         GameObject go = Instantiate(playerPrefab, new Vector3(0f, sizeY - 1f, -1f),Quaternion.identity);
         go.name = "Player";
         playing = true;
+        //Add the player to the currentmaze so we can remove it when we want a new maze
+        go.transform.parent = currentMaze.transform;
+    }
+
+    public void SetDelay(string newText)
+    {
+        float newDelay = float.Parse(newText);
+        delay = newDelay / 100;
     }
 }
