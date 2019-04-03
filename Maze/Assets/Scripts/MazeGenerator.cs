@@ -7,7 +7,7 @@ public class MazeGenerator : MonoBehaviour
 
     public int sizeX, sizeY;
     public float generateDelay;
-
+    public bool mazePlayable = false;
     public Cell cell;
 
     private Cell[,] Cells;
@@ -41,13 +41,10 @@ public class MazeGenerator : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     void RandomNextStep()
     {
+        // set a new random direction, can't be the same as the previous direction
         randomDirection = Random.Range(0, 4);
         if (randomDirection == randomLastStep)
         {
@@ -65,6 +62,7 @@ public class MazeGenerator : MonoBehaviour
 
     public void CreateGrid()
     {
+        //Instantiate the Grid
         for (int x = 0; x < sizeX; x++)
         {
             for (int y = 0; y < sizeY; y++)
@@ -73,6 +71,7 @@ public class MazeGenerator : MonoBehaviour
                 
             }
         }
+        //Remove the top left and bottem right walls so we can start and finish the maze.
         Cells[0, sizeY-1].northWall.SetActive(false);
         Cells[sizeX-1, 0].southWall.SetActive(false);
         StartCoroutine(RandomMazeWalker());
@@ -80,6 +79,7 @@ public class MazeGenerator : MonoBehaviour
 
     void CreateCell(int posX, int posY)
     {
+        //Create a new cell on position and add it to the cells list so we can keep track
         Cell newCell = Instantiate(cell) as Cell;
         Cells[posX, posY] = newCell;
         newCell.transform.localPosition = new Vector3(posX, posY, 0);
@@ -91,16 +91,20 @@ public class MazeGenerator : MonoBehaviour
 
     public IEnumerator RandomMazeWalker()
     {
+        //Random maze walker starts the maze untill it fails to find a new cell without a direction.
         for (failedTries = 0; failedTries <= 10; failedTries++)
         {
             RandomNextStep();
 
+            //if the next cell doesn't have a direction and has atleast 3 walls we can go here
             if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction == new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
             {
                 RemoveWalls();
-
+                //Set the direction of the current cell so it cannot be visited again          
                 Cells[(int)currentCellPos.x, (int)currentCellPos.y].direction = nextDirection;
+                
                 failedTries = 0;
+                //Remove the cell from the list so we dont have to check it again
                 allCells.Remove(Cells[(int)currentCellPos.x, (int)currentCellPos.y]);
             }
 
@@ -113,6 +117,7 @@ public class MazeGenerator : MonoBehaviour
 
     void CheckBounds()
     {
+        //Check if the next position is within the array, if it is not try a new random direction
         if (nextCellPos.x < sizeX && nextCellPos.x >= 0 && nextCellPos.y < sizeY && nextCellPos.y >= 0)
         {
             return;
@@ -123,15 +128,19 @@ public class MazeGenerator : MonoBehaviour
 
     IEnumerator FinishMaze()
     {
+        //Run this untill there are no cells left that do not have a direction.
         while (noDirectionCount > 0)
         {
             noDirectionCount = 0;
+            //Start at the back of the List so we can remove a cell from it if it has a direction
             for (int i = allCells.Count - 1; i > -1; i--)
             {
                 if (allCells[i].direction == new Vector2(0, 0) && allCells[i].GetComponentsInChildren<Transform>().GetLength(0) > 2)
                 {
                     currentCellPos = new Vector2((int)allCells[i].transform.position.x,(int)allCells[i].transform.position.y);
+
                     RandomNextStep();
+
                     noDirectionCount++;
 
                     if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction != new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
@@ -145,6 +154,8 @@ public class MazeGenerator : MonoBehaviour
                 }
             }
         }
+        //If this method has finished we can play the maze
+        mazePlayable = true;
     }
 
 

@@ -10,11 +10,5 @@ public class Cell : MonoBehaviour
     public GameObject westWall;
 
     public Vector2 direction;
-    public bool isVisited;
-
-    private void Start()
-    {
-        this.isVisited = false;
-    }
 }
 
