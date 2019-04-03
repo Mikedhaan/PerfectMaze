@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    public int sizeX, sizeY;
+
     public MazeGenerator mazePrefab;
     private MazeGenerator mazeGenerator;
     public GameObject cameraPrefab;
@@ -22,8 +24,9 @@ public class GameManager : MonoBehaviour {
     {
         mazeGenerator = Instantiate(mazePrefab) as MazeGenerator;
         mazeGenerator.name = "Maze";
+        mazeGenerator.sizeX = sizeX;
+        mazeGenerator.sizeY = sizeY;
         Instantiate(cameraPrefab);
-        StartCoroutine(mazeGenerator.CreateGrid());
     }
     
     void RestartGame()

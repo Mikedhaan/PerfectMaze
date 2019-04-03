@@ -11,6 +11,7 @@ public class CameraBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         mazeCamera = this.gameObject.GetComponent<Camera>();
+
         mazeGenerator = GameObject.Find("Maze").GetComponent<MazeGenerator>();
         sizeX = mazeGenerator.sizeX;
         sizeY = mazeGenerator.sizeY;
