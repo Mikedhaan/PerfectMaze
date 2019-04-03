@@ -17,24 +17,27 @@ public class CameraBehaviour : MonoBehaviour {
         sizeY = gameManager.sizeY;
 
         //Set the position of the camera in the middle of the maze
-        mazeCamera.transform.position = new Vector3((sizeX / 2) -0.5f, (sizeY / 2)-0.5f, -10);
+        // mazeCamera.transform.position = new Vector3((sizeX / 2) - 0.5f, (sizeY / 2) - 0.5f, -10);
+        mazeCamera.orthographicSize = sizeX * Screen.height / Screen.width * 0.8f;
+       // mazeCamera.orthographicSize += 1f;
+        mazeCamera.transform.position = new Vector3((sizeX - 1) / 2, (sizeY - 1) / 2, -10f);
 
 
-        float screenRatio = (float)Screen.width / (float)Screen.height;
-        float targetRatio = sizeX / sizeY;
+        //float screenRatio = (float)Screen.width / (float)Screen.height;
+        //float targetRatio = sizeX / sizeY;
 
-        if (screenRatio >= targetRatio)
-        {
-            mazeCamera.orthographicSize = sizeY / 2;
-        }
-        else
-        {
-            float differenceInSize = targetRatio / screenRatio;
-            mazeCamera.orthographicSize = sizeY / 2 * differenceInSize;
-        }
+        //if (screenRatio >= targetRatio)
+        //{
+        //    mazeCamera.orthographicSize = sizeY / 2;
+        //}
+        //else
+        //{
+        //    float differenceInSize = targetRatio / screenRatio;
+        //    mazeCamera.orthographicSize = sizeY / 2 * differenceInSize;
+        //}
 
-        mazeCamera.orthographicSize += 0.5f;
+        //mazeCamera.orthographicSize += 0.5f;
     }
-	
+
 
 }

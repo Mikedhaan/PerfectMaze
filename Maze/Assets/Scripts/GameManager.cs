@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour {
         {
             if (!playMazeButton.activeSelf && mazeGenerator.mazePlayable)
             {
+                //only show the play button when we can play
                 playMazeButton.SetActive(true);
             }
         }
@@ -45,19 +46,20 @@ public class GameManager : MonoBehaviour {
         }
 
 
-        timerText.text = playTime.ToString("00.00"); //+ ":" + seconds.ToString("00");
+        timerText.text = playTime.ToString("00.00");
     }
 
     public void BeginGame()
     {
         
-        //
+        //Stop all coroutines that might be running from the last maze generation
         StopAllCoroutines();
 
+        //Destroy the previous maze if its active
         if (currentMaze != null)
             Destroy(currentMaze);
 
-        if (sizeX != 0 && sizeY != 0 && delay > 0)
+        if (sizeX != 0 && sizeY != 0)
         {
             //Instantiate the maze with settings
             mazeGenerator = Instantiate(mazePrefab) as MazeGenerator;
