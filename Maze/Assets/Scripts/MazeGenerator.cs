@@ -53,9 +53,14 @@ public class MazeGenerator : MonoBehaviour
 
             }
         }
-        //Remove the top left and bottem right walls so we can start and finish the maze.
+        //Remove the top left and bottem right walls so we have a start and a finish for our maze.
         Cells[0, sizeY - 1].northWall.SetActive(false);
         Cells[sizeX - 1, 0].southWall.SetActive(false);
+        
+        //Add a finish and boxcollider with trigger to the component so we can really finish the maze.
+        Cells[sizeX - 1, 0].gameObject.AddComponent<Finish>();
+        Cells[sizeX - 1, 0].gameObject.AddComponent<BoxCollider>().isTrigger = true;
+
         StartCoroutine(RandomMazeWalker());
     }
 
@@ -89,7 +94,6 @@ public class MazeGenerator : MonoBehaviour
 
         CheckBounds();
     }
-
 
 
     public IEnumerator RandomMazeWalker()
@@ -179,6 +183,8 @@ public class MazeGenerator : MonoBehaviour
 
     void RemoveWalls()
     {
+        //Create a path by destroying walls on both sides.
+
         if (randomDirection == 0)
         {
             //up
@@ -203,7 +209,7 @@ public class MazeGenerator : MonoBehaviour
             GetCell(currentCellPos).westWall.SetActive(false);
             GetCell(nextCellPos).eastWall.SetActive(false);
         }
-
+        //if we have removed the walls we move to the next cell.
         currentCellPos = nextCellPos;
     }
 

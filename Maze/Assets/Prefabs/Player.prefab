@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 135243246241657606}
   - component: {fileID: 54992715019822598}
   - component: {fileID: 114993590980687576}
+  - component: {fileID: 135481594951084496}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -125,3 +126,15 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &135481594951084496
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1515260540058732}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 1}

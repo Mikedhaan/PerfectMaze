@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
     public int sizeX, sizeY;
+
+    public bool playing = false;
+    public float playTime = 0;
 
     public MazeGenerator mazePrefab;
 
@@ -12,10 +16,13 @@ public class GameManager : MonoBehaviour {
     public GameObject playerPrefab;
 
     public GameObject playMazeButton;
+    public Text timerText;
 
     private GameObject currentMaze;
 
     private MazeGenerator mazeGenerator;
+
+
     // Use this for initialization
     void Start () {
         playMazeButton.SetActive(false);
@@ -31,6 +38,13 @@ public class GameManager : MonoBehaviour {
             }
         }
 
+        if(playing)
+        {
+            playTime += Time.deltaTime;
+        }
+
+
+        timerText.text = playTime.ToString("00.00"); //+ ":" + seconds.ToString("00");
     }
 
     public void BeginGame()
@@ -62,6 +76,8 @@ public class GameManager : MonoBehaviour {
 
         //Turn off button on creation so it has a new reference
         playMazeButton.SetActive(false);
+        playing = false;
+        playTime = 0;
     }
     
     public void RestartGame()
@@ -84,6 +100,8 @@ public class GameManager : MonoBehaviour {
 
     public void spawnPlayer()
     {
-        Instantiate(playerPrefab, new Vector3(0f, sizeY - 1f, -1f),Quaternion.identity);
+        GameObject go = Instantiate(playerPrefab, new Vector3(0f, sizeY - 1f, -1f),Quaternion.identity);
+        go.name = "Player";
+        playing = true;
     }
 }
