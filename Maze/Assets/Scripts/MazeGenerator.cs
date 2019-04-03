@@ -12,7 +12,7 @@ public class MazeGenerator : MonoBehaviour
 
     private Cell[,] Cells;
 
-    private int failedTries;
+    public int failedTries;
 
     private Vector2[] directions =
         {
@@ -23,12 +23,12 @@ public class MazeGenerator : MonoBehaviour
         };
 
     private List<Cell> allCells;
-
+    private bool everyCellHasDirections;
     private Vector2 nextDirection;
     private Vector2 currentCell;
     private Vector2 nextCell;
     private int randomDirection;
-
+    private int noDirectionCount = 1;
 
     // Use this for initialization
     void Start()
@@ -36,16 +36,13 @@ public class MazeGenerator : MonoBehaviour
         Cells = new Cell[sizeX, sizeY];
         allCells = new List<Cell>();
         currentCell = new Vector2((int)sizeX / 2, (int)sizeY / 2);
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (failedTries >= 20)
-        //{
-        //    FinishMaze();
-        //}
+
     }
 
     void RandomNextStep()
@@ -82,10 +79,9 @@ public class MazeGenerator : MonoBehaviour
 
     public IEnumerator MazeMaker()
     {
-        for (failedTries = 0; failedTries < 20; failedTries++)
+        for (failedTries = 0; failedTries <= 20; failedTries++)
         {
             RandomNextStep();
-            failedTries++;
 
             if (Cells[(int)nextCell.x, (int)nextCell.y].direction == new Vector2(0, 0))
             {
@@ -94,15 +90,18 @@ public class MazeGenerator : MonoBehaviour
                 Cells[(int)currentCell.x, (int)currentCell.y].direction = nextDirection;
                 failedTries = 0;
                 allCells.Remove(Cells[(int)currentCell.x, (int)currentCell.y]);
-
             }
+
             yield return new WaitForSeconds(generateDelay);
-            
+
+
         }
         if (failedTries >= 20)
         {
-            StartCoroutine(FinishMaze());
+            CleanList();
+            yield break;
         }
+
     }
 
     void CheckBounds()
@@ -117,37 +116,41 @@ public class MazeGenerator : MonoBehaviour
 
     IEnumerator FinishMaze()
     {
-
-        foreach (Cell cell in allCells)
+        while (noDirectionCount > 0)
         {
-            if (cell.direction == new Vector2(0, 0))
+            noDirectionCount = 0;
+            for (int i = allCells.Count - 1; i > -1; i--)
             {
-                currentCell = new Vector2((int)cell.transform.position.x, (int)cell.transform.position.y);
-                RandomNextStep();
-                if (Cells[(int)nextCell.x, (int)nextCell.y].direction != new Vector2(0, 0))
+                if (allCells[i].direction == new Vector2(0, 0))
                 {
-                    RemoveWalls();
-                    cell.direction = nextDirection;
-                    yield return new WaitForSeconds(generateDelay);
-
+                    currentCell = new Vector2((int)allCells[i].transform.position.x,(int)allCells[i].transform.position.y);
+                    RandomNextStep();
+                    noDirectionCount++;
+                    if (Cells[(int)nextCell.x, (int)nextCell.y].direction != new Vector2(0, 0))
+                    {
+                        RemoveWalls();
+                        noDirectionCount--;
+                        allCells[i].direction = nextDirection;
+                        allCells.RemoveAt(i);
+                        yield return new WaitForSeconds(generateDelay);
+                    }
                 }
             }
-
         }
-        cleanList();
     }
 
-    void cleanList()
+    void CleanList()
     {
-        for (int i = allCells.Count; i > 0; i--)
+
+        for (var i = allCells.Count - 1; i > -1; i--)
         {
-            if (allCells[i].direction != new Vector2(0, 0))
-            {
+            if (allCells[i] == null)
                 allCells.RemoveAt(i);
-            }
         }
 
+        StartCoroutine(FinishMaze());
     }
+
 
 
     Cell GetCell(Vector2 cellPos)

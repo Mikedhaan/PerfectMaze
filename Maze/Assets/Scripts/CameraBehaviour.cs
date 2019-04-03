@@ -16,7 +16,7 @@ public class CameraBehaviour : MonoBehaviour {
         sizeY = mazeGenerator.sizeY;
 
 
-        mazeCamera.transform.position = new Vector3(sizeX / 2, (sizeY / 2)-0.5f, -10);
+        mazeCamera.transform.position = new Vector3((sizeX / 2) -0.5f, (sizeY / 2)-0.5f, -10);
 
 
         float screenRatio = (float)Screen.width / (float)Screen.height;
