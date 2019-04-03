@@ -25,6 +25,7 @@ public class MazeGenerator : MonoBehaviour
     private Vector2 currentCellPos;
     private Vector2 nextCellPos;
 
+    private int randomLastStep;
     private int randomDirection;
     private int failedTries;
     private int noDirectionCount = 1;
@@ -35,6 +36,7 @@ public class MazeGenerator : MonoBehaviour
         Cells = new Cell[sizeX, sizeY];
         allCells = new List<Cell>();
         currentCellPos = new Vector2((int)sizeX / 2, (int)sizeY / 2);
+        randomLastStep = 0;
         CreateGrid();
     }
 
@@ -47,7 +49,15 @@ public class MazeGenerator : MonoBehaviour
     void RandomNextStep()
     {
         randomDirection = Random.Range(0, 4);
+        if (randomDirection == randomLastStep)
+        {
+            RandomNextStep();
+            return;
+        }
+
+        randomLastStep = randomDirection;
         nextDirection = directions[randomDirection];
+        
         nextCellPos = currentCellPos + nextDirection;
 
         CheckBounds();
@@ -60,11 +70,12 @@ public class MazeGenerator : MonoBehaviour
             for (int y = 0; y < sizeY; y++)
             {
                 CreateCell(x, y);
+                
             }
         }
         Cells[0, sizeY-1].northWall.SetActive(false);
         Cells[sizeX-1, 0].southWall.SetActive(false);
-        StartCoroutine(MazeMaker());
+        StartCoroutine(RandomMazeWalker());
     }
 
     void CreateCell(int posX, int posY)
@@ -75,15 +86,16 @@ public class MazeGenerator : MonoBehaviour
         newCell.name = "Floor " + posX + " " + posY;
         newCell.transform.parent = this.transform;
         allCells.Add(newCell);
+
     }
 
-    public IEnumerator MazeMaker()
+    public IEnumerator RandomMazeWalker()
     {
         for (failedTries = 0; failedTries <= 10; failedTries++)
         {
             RandomNextStep();
 
-            if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction == new Vector2(0, 0))
+            if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction == new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
             {
                 RemoveWalls();
 
@@ -116,13 +128,13 @@ public class MazeGenerator : MonoBehaviour
             noDirectionCount = 0;
             for (int i = allCells.Count - 1; i > -1; i--)
             {
-                if (allCells[i].direction == new Vector2(0, 0))
+                if (allCells[i].direction == new Vector2(0, 0) && allCells[i].GetComponentsInChildren<Transform>().GetLength(0) > 2)
                 {
                     currentCellPos = new Vector2((int)allCells[i].transform.position.x,(int)allCells[i].transform.position.y);
                     RandomNextStep();
                     noDirectionCount++;
 
-                    if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction != new Vector2(0, 0))
+                    if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction != new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
                     {
                         RemoveWalls();
                         noDirectionCount--;

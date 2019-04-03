@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\Cell.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\MazeGenerator.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/mike/Desktop/PerfectMaze/Maze/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
