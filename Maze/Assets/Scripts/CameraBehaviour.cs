@@ -16,7 +16,7 @@ public class CameraBehaviour : MonoBehaviour {
         sizeX = gameManager.sizeX;
         sizeY = gameManager.sizeY;
 
-
+        //Set the position of the camera in the middle of the maze
         mazeCamera.transform.position = new Vector3((sizeX / 2) -0.5f, (sizeY / 2)-0.5f, -10);
 
 
@@ -32,11 +32,9 @@ public class CameraBehaviour : MonoBehaviour {
             float differenceInSize = targetRatio / screenRatio;
             mazeCamera.orthographicSize = sizeY / 2 * differenceInSize;
         }
+
         mazeCamera.orthographicSize += 0.5f;
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }

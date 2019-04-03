@@ -31,8 +31,6 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-
-
     }
 
     public void BeginGame()

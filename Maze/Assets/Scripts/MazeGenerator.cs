@@ -14,6 +14,7 @@ public class MazeGenerator : MonoBehaviour
 
     private List<Cell> allCells;
 
+    //A path can be made in 4 directions. in this case - up, right, down, left.
     private Vector2[] directions =
         {
             new Vector2 (0, 1),
@@ -21,6 +22,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2(0,-1),
             new Vector2(-1, 0)
         };
+
     private Vector2 nextDirection;
     private Vector2 currentCellPos;
     private Vector2 nextCellPos;
@@ -40,26 +42,6 @@ public class MazeGenerator : MonoBehaviour
         CreateGrid();
     }
 
-    // Update is called once per frame
-
-    void RandomNextStep()
-    {
-        // set a new random direction, can't be the same as the previous direction
-        randomDirection = Random.Range(0, 4);
-        if (randomDirection == randomLastStep)
-        {
-            RandomNextStep();
-            return;
-        }
-
-        randomLastStep = randomDirection;
-        nextDirection = directions[randomDirection];
-        
-        nextCellPos = currentCellPos + nextDirection;
-
-        CheckBounds();
-    }
-
     public void CreateGrid()
     {
         //Instantiate the Grid
@@ -68,12 +50,12 @@ public class MazeGenerator : MonoBehaviour
             for (int y = 0; y < sizeY; y++)
             {
                 CreateCell(x, y);
-                
+
             }
         }
         //Remove the top left and bottem right walls so we can start and finish the maze.
-        Cells[0, sizeY-1].northWall.SetActive(false);
-        Cells[sizeX-1, 0].southWall.SetActive(false);
+        Cells[0, sizeY - 1].northWall.SetActive(false);
+        Cells[sizeX - 1, 0].southWall.SetActive(false);
         StartCoroutine(RandomMazeWalker());
     }
 
@@ -89,6 +71,27 @@ public class MazeGenerator : MonoBehaviour
 
     }
 
+    void RandomNextStep()
+    {
+        // set a new random direction, can't be the same as the previous direction
+        randomDirection = Random.Range(0, 4);
+        if (randomDirection == randomLastStep)
+        {
+            RandomNextStep();
+            return;
+        }
+
+        randomLastStep = randomDirection;
+        nextDirection = directions[randomDirection];
+        
+        //Get the nextcell position from our current cell + the next direction.
+        nextCellPos = currentCellPos + nextDirection;
+
+        CheckBounds();
+    }
+
+
+
     public IEnumerator RandomMazeWalker()
     {
         //Random maze walker starts the maze untill it fails to find a new cell without a direction.
@@ -100,10 +103,12 @@ public class MazeGenerator : MonoBehaviour
             if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction == new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
             {
                 RemoveWalls();
+                
                 //Set the direction of the current cell so it cannot be visited again          
                 Cells[(int)currentCellPos.x, (int)currentCellPos.y].direction = nextDirection;
                 
                 failedTries = 0;
+                
                 //Remove the cell from the list so we dont have to check it again
                 allCells.Remove(Cells[(int)currentCellPos.x, (int)currentCellPos.y]);
             }
@@ -137,17 +142,25 @@ public class MazeGenerator : MonoBehaviour
             {
                 if (allCells[i].direction == new Vector2(0, 0) && allCells[i].GetComponentsInChildren<Transform>().GetLength(0) > 2)
                 {
+                    //Set the currentCellPos to the current allCell index so that we can remove its walls if it needs to
                     currentCellPos = new Vector2((int)allCells[i].transform.position.x,(int)allCells[i].transform.position.y);
 
                     RandomNextStep();
 
+                    //cell has no direction yet so increase the count
                     noDirectionCount++;
 
+                    //Check if nextCell already has a direction if so we add the current cell to the path.
                     if (Cells[(int)nextCellPos.x, (int)nextCellPos.y].direction != new Vector2(0, 0) && Cells[(int)nextCellPos.x, (int)nextCellPos.y].GetComponentsInChildren<Transform>().GetLength(0) > 2)
                     {
-                        RemoveWalls();
+                        //Cell is getting a direction so decrease the count
                         noDirectionCount--;
+
+                        RemoveWalls();
+                        
                         allCells[i].direction = nextDirection;
+
+                        //Remove the cell from the list because it now has a direction
                         allCells.RemoveAt(i);
                         yield return new WaitForSeconds(generateDelay);
                     }
@@ -158,7 +171,7 @@ public class MazeGenerator : MonoBehaviour
         mazePlayable = true;
     }
 
-
+    //Return a cell with a position so we can acces cell properties easily.
     Cell GetCell(Vector2 cellPos)
     {
         return Cells[(int)cellPos.x, (int)cellPos.y];
