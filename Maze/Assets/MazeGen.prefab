@@ -53,6 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sizeX: 25
   sizeY: 25
-  generateDelay: 0
+  generateDelay: 0.1
   cell: {fileID: 114078329491486366, guid: db6dca4caee8821428557f05e38771cd, type: 2}
-  failedTries: 0
