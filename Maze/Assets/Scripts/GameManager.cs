@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour {
 
     public MazeGenerator mazePrefab;
     private MazeGenerator mazeGenerator;
+    public GameObject cameraPrefab;
+
 	// Use this for initialization
 	void Start () {
         BeginGame();
@@ -19,6 +21,8 @@ public class GameManager : MonoBehaviour {
     void BeginGame()
     {
         mazeGenerator = Instantiate(mazePrefab) as MazeGenerator;
+        mazeGenerator.name = "Maze";
+        Instantiate(cameraPrefab);
         StartCoroutine(mazeGenerator.CreateGrid());
     }
     

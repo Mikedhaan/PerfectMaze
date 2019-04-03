@@ -36,7 +36,7 @@ public class MazeGenerator : MonoBehaviour
         Cells = new Cell[sizeX, sizeY];
         allCells = new List<Cell>();
         currentCell = new Vector2((int)sizeX / 2, (int)sizeY / 2);
-
+        
     }
 
     // Update is called once per frame
@@ -97,7 +97,7 @@ public class MazeGenerator : MonoBehaviour
 
             }
             yield return new WaitForSeconds(generateDelay);
-
+            
         }
         if (failedTries >= 20)
         {
@@ -134,7 +134,7 @@ public class MazeGenerator : MonoBehaviour
             }
 
         }
-        //cleanList();
+        cleanList();
     }
 
     void cleanList()
